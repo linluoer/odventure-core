@@ -18,8 +18,9 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 
 public class MedalRenderer implements BlockEntityRenderer<MedalBlockEntity> {
-
-    private static final double FRONT_OFFSET = -0.40;
+    private static final double FRONT_OFFSET = -0.40;   // 沿朝向法线, 负=贴墙
+    private static final double VERTICAL_OFFSET = -0.08; // 正=上移, 负=下移, 对准凹槽
+    private static final float ITEM_SCALE = 0.4f;        // 物品大小, 配合凹槽
 
     public MedalRenderer(BlockEntityRendererProvider.Context context) {
     }
@@ -43,11 +44,10 @@ public class MedalRenderer implements BlockEntityRenderer<MedalBlockEntity> {
             };
 
             pose.pushPose();
-            pose.translate(0.5, 0.5, 0.5);
+            pose.translate(0.5, 0.5 + VERTICAL_OFFSET, 0.5);
             pose.translate(facing.getStepX() * FRONT_OFFSET, 0.0, facing.getStepZ() * FRONT_OFFSET);
             pose.mulPose(Axis.YP.rotationDegrees(yRot));
-            float s = 0.5f;
-            pose.scale(s, s, s);
+            pose.scale(ITEM_SCALE, ITEM_SCALE, ITEM_SCALE);
             Minecraft.getInstance().getItemRenderer().renderStatic(
                     stack, ItemDisplayContext.FIXED, light, overlay,
                     pose, buffer, level, 0);
