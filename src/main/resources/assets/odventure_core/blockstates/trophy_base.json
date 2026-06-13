@@ -1,0 +1,8 @@
+{
+  "variants": {
+    "facing=north": { "model": "odventure_core:block/trophy_base" },
+    "facing=south": { "model": "odventure_core:block/trophy_base", "y": 180 },
+    "facing=west":  { "model": "odventure_core:block/trophy_base", "y": 270 },
+    "facing=east":  { "model": "odventure_core:block/trophy_base", "y": 90  }
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "variants": {
+    "facing=south": { "model": "odventure_core:block/medal", "y": 0   },
+    "facing=west":  { "model": "odventure_core:block/medal", "y": 90  },
+    "facing=north": { "model": "odventure_core:block/medal", "y": 180 },
+    "facing=east":  { "model": "odventure_core:block/medal", "y": 270 }
+  }
+}

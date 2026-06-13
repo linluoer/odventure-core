@@ -1,0 +1,15 @@
+{
+  "block.odventure_core.medal": "Odventure Medal",
+  "block.odventure_core.trophy_base": "Odventure Trophy Base",
+  "itemGroup.odventure_core": "Odventure",
+   "screen.odventure_core.name": "Set Name",
+   "item.odventure_core.trophy_base.empty": "Odventure Trophy Base",
+   "item.odventure_core.trophy_base.finished": "Odventure Trophy",
+   "item.odventure_core.medal.empty": "Odventure Medal",
+   "item.odventure_core.medal.finished": "Odventure Medal",
+   "tooltip.odventure_core.unnamed": "Unnamed",
+   "screen.odventure_core.adjust": "Adjust Display",
+   "screen.odventure_core.scale": "Scale",
+   "screen.odventure_core.yaw": "Yaw",
+   "screen.odventure_core.yoff": "Y Offset"
+}
