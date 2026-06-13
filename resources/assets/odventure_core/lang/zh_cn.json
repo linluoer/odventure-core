@@ -1,0 +1,15 @@
+{
+  "block.odventure_core.medal": "Odventure奖章",
+  "block.odventure_core.trophy_base": "Odventure奖杯基座",
+  "itemGroup.odventure_core": "Odventure",
+  "screen.odventure_core.name": "设置名称",
+  "item.odventure_core.trophy_base.empty": "Odventure奖杯基座",
+  "item.odventure_core.trophy_base.finished": "Odventure奖杯",
+  "item.odventure_core.medal.empty": "Odventure奖章",
+  "item.odventure_core.medal.finished": "Odventure奖章",
+  "tooltip.odventure_core.unnamed": "无名",
+  "screen.odventure_core.adjust": "展示参数调整",
+  "screen.odventure_core.scale": "缩放",
+  "screen.odventure_core.yaw": "旋转角度",
+  "screen.odventure_core.yoff": "高度偏移"
+}
