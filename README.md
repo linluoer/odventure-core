@@ -4,6 +4,7 @@ A Minecraft mod that adds two kinds of display blocks: the Trophy Base and the M
 
 - Platform: Minecraft 1.20.1 / Forge 47.x
 - Mod ID: `odventure_core`
+- Author: liluo23
 
 ---
 
@@ -188,6 +189,7 @@ All Rights Reserved.
 
 - 平台：Minecraft 1.20.1 / Forge 47.x
 - Mod ID：`odventure_core`
+- 作者: liluo23
 
 ---
 
