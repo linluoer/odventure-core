@@ -3,6 +3,7 @@ package com.odventure.core.client.render;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import com.odventure.core.block.entity.MedalBlockEntity;
+import com.odventure.core.config.ConfigCache;
 import com.odventure.core.data.MedalData;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -18,9 +19,9 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 
 public class MedalRenderer implements BlockEntityRenderer<MedalBlockEntity> {
-    private static final double FRONT_OFFSET = -0.40;   // 沿朝向法线, 负=贴墙
-    private static final double VERTICAL_OFFSET = -0.08; // 正=上移, 负=下移, 对准凹槽
-    private static final float ITEM_SCALE = 0.4f;        // 物品大小, 配合凹槽
+    private static final double FRONT_OFFSET = -0.40;
+    private static final double VERTICAL_OFFSET = -0.08;
+    private static final float ITEM_SCALE = 0.4f;
 
     public MedalRenderer(BlockEntityRendererProvider.Context context) {
     }
@@ -54,7 +55,7 @@ public class MedalRenderer implements BlockEntityRenderer<MedalBlockEntity> {
             pose.popPose();
         }
 
-        if (isLookedAt(be)) {
+        if (ConfigCache.showFloatingName() && isLookedAt(be)) {
             FloatingNameRenderer.render(resolveName(data), 1.1f, pose, buffer, light);
         }
     }

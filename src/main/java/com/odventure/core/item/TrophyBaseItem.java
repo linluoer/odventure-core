@@ -1,5 +1,6 @@
 package com.odventure.core.item;
 
+import com.odventure.core.client.ClientItemExtensions;
 import com.odventure.core.data.TrophyData;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -11,13 +12,20 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
+import net.minecraftforge.client.extensions.common.IClientItemExtensions;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.function.Consumer;
 
 public class TrophyBaseItem extends BlockItem {
     public TrophyBaseItem(Block block, Properties props) {
         super(block, props);
+    }
+
+    @Override
+    public void initializeClient(Consumer<IClientItemExtensions> consumer) {
+        consumer.accept(ClientItemExtensions.trophy());
     }
 
     private boolean isFinished(ItemStack stack) {
@@ -55,7 +63,6 @@ public class TrophyBaseItem extends BlockItem {
                 tooltip.add(contentName.copy().withStyle(ChatFormatting.GRAY));
             }
         }
-
         super.appendHoverText(stack, level, tooltip, flag);
     }
 
@@ -64,18 +71,9 @@ public class TrophyBaseItem extends BlockItem {
         ResourceLocation id = data.getContentId();
         if (id == null) return null;
         return switch (data.getContentType()) {
-            case BLOCK -> {
-                Block b = BuiltInRegistries.BLOCK.get(id);
-                yield b.getName();
-            }
-            case ITEM -> {
-                var item = BuiltInRegistries.ITEM.get(id);
-                yield item.getDescription();
-            }
-            case ENTITY -> {
-                var type = BuiltInRegistries.ENTITY_TYPE.get(id);
-                yield type.getDescription();
-            }
+            case BLOCK -> BuiltInRegistries.BLOCK.get(id).getName();
+            case ITEM -> BuiltInRegistries.ITEM.get(id).getDescription();
+            case ENTITY -> BuiltInRegistries.ENTITY_TYPE.get(id).getDescription();
             default -> null;
         };
     }
