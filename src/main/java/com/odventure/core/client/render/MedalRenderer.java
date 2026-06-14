@@ -19,9 +19,9 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 
 public class MedalRenderer implements BlockEntityRenderer<MedalBlockEntity> {
-    private static final double FRONT_OFFSET = -0.40;
-    private static final double VERTICAL_OFFSET = -0.08;
-    private static final float ITEM_SCALE = 0.4f;
+    private static final double FRONT_OFFSET = -0.34;
+    private static final double VERTICAL_OFFSET = 0.12;
+    private static final float ITEM_SCALE = 0.45f;
 
     public MedalRenderer(BlockEntityRendererProvider.Context context) {
     }

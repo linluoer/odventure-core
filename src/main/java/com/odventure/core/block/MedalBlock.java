@@ -81,12 +81,13 @@ public class MedalBlock extends HorizontalDirectionalBlock implements EntityBloc
 
     @Override
     public VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext ctx) {
+        // 牌匾凸出 3 像素, 用单个包围盒近似(不逐级跟梯形)
         return switch (state.getValue(FACING)) {
-            case NORTH -> Block.box(1, 1, 14.5, 15, 15, 16);
-            case SOUTH -> Block.box(1, 1, 0, 15, 15, 1.5);
-            case WEST  -> Block.box(14.5, 1, 1, 16, 15, 15);
-            case EAST  -> Block.box(0, 1, 1, 1.5, 15, 15);
-            default    -> Block.box(1, 1, 0, 15, 15, 1.5);
+            case NORTH -> Block.box(2, 1, 13, 14, 15, 16);
+            case SOUTH -> Block.box(2, 1, 0, 14, 15, 3);
+            case WEST  -> Block.box(13, 1, 2, 16, 15, 14);
+            case EAST  -> Block.box(0, 1, 2, 3, 15, 14);
+            default    -> Block.box(2, 1, 0, 14, 15, 3);
         };
     }
 
