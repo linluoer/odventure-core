@@ -1,5 +1,6 @@
 package com.odventure.core.item;
 
+import com.odventure.core.client.ClientItemExtensions;
 import com.odventure.core.data.MedalData;
 import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.CompoundTag;
@@ -9,13 +10,20 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
+import net.minecraftforge.client.extensions.common.IClientItemExtensions;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.function.Consumer;
 
 public class MedalItem extends BlockItem {
     public MedalItem(Block block, Properties props) {
         super(block, props);
+    }
+
+    @Override
+    public void initializeClient(Consumer<IClientItemExtensions> consumer) {
+        consumer.accept(ClientItemExtensions.medal());
     }
 
     private boolean isFinished(ItemStack stack) {
@@ -49,7 +57,6 @@ public class MedalItem extends BlockItem {
         if (data.isContentLocked() && !data.getEmbeddedItem().isEmpty()) {
             tooltip.add(data.getEmbeddedItem().getHoverName().copy().withStyle(ChatFormatting.GRAY));
         }
-
         super.appendHoverText(stack, level, tooltip, flag);
     }
 }

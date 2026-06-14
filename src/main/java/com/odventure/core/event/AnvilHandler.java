@@ -1,6 +1,7 @@
 package com.odventure.core.event;
 
 import com.odventure.core.OdventureCore;
+import com.odventure.core.config.ModConfig;
 import com.odventure.core.registry.ModItems;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.event.AnvilUpdateEvent;
@@ -12,15 +13,11 @@ public class AnvilHandler {
 
     @SubscribeEvent
     public static void onAnvilUpdate(AnvilUpdateEvent event) {
+        if (!ModConfig.ENABLE_ANVIL_BLOCK.get()) return;
         ItemStack left = event.getLeft();
-        if (isOurItem(left)) {
-
+        if (left.getItem() == ModItems.TROPHY_BASE.get()
+                || left.getItem() == ModItems.MEDAL.get()) {
             event.setCanceled(true);
         }
-    }
-
-    private static boolean isOurItem(ItemStack stack) {
-        return stack.getItem() == ModItems.TROPHY_BASE.get()
-                || stack.getItem() == ModItems.MEDAL.get();
     }
 }

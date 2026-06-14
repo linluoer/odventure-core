@@ -1,5 +1,6 @@
 package com.odventure.core.client.render;
 
+import com.odventure.core.config.ConfigCache;
 import net.minecraft.world.entity.AgeableMob;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -7,21 +8,12 @@ import net.minecraft.world.level.Level;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
 public class FakeEntityCache {
     private static final Map<EntityType<?>, Entity> CACHE = new HashMap<>();
 
-    public static final Set<EntityType<?>> BLACKLIST = Set.of(
-            EntityType.AREA_EFFECT_CLOUD,
-            EntityType.LIGHTNING_BOLT,
-            EntityType.FALLING_BLOCK,
-            EntityType.ITEM,
-            EntityType.PLAYER
-    );
-
     public static boolean isBlacklisted(EntityType<?> type) {
-        return BLACKLIST.contains(type);
+        return ConfigCache.isBlacklisted(type);
     }
 
     public static Entity get(Level level, EntityType<?> type) {

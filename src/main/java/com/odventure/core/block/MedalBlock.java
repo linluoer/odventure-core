@@ -2,6 +2,7 @@ package com.odventure.core.block;
 
 import com.odventure.core.block.entity.MedalBlockEntity;
 import com.odventure.core.client.ClientHelper;
+import com.odventure.core.config.ModConfig;
 import com.odventure.core.data.MedalData;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -104,7 +105,7 @@ public class MedalBlock extends HorizontalDirectionalBlock implements EntityBloc
         MedalData data = be.getData();
         ItemStack held = player.getItemInHand(hand);
 
-        if (player.isShiftKeyDown()) {
+        if (player.isShiftKeyDown() && ModConfig.ENABLE_SNEAK_RETRIEVE.get()) {
             if (!level.isClientSide) {
                 ItemStack drop = makeRetrieveStack(data);
                 level.removeBlock(pos, false);
