@@ -4,6 +4,7 @@ A Minecraft mod that adds two kinds of display blocks: the Trophy Base and the M
 
 - Platform: Minecraft 1.20.1 / Forge 47.x
 - Mod ID: `odventure_core`
+- Version: 1.0.0
 - Author: liluo23
 
 ---
@@ -13,24 +14,25 @@ A Minecraft mod that adds two kinds of display blocks: the Trophy Base and the M
 ### Trophy Base
 - A short smooth-stone pedestal that faces the player when placed.
 - Right-click with a block, item, or spawn egg to display it:
-  - Block -> the block is rendered above the pedestal
-  - Item -> the item is rendered as a 3D model
-  - Spawn egg -> the adult form of the entity is rendered, auto-scaled to a uniform size
+  - Block: the block is rendered above the pedestal
+  - Item: the item is rendered as a 3D model
+  - Spawn egg: the adult form of the entity is rendered, auto-scaled to a uniform size
 - Once content is set, the pedestal becomes a full-cube collision.
 - In creative mode, the display scale, rotation, and height offset can be adjusted.
 
 ### Medal
 - A wall-mounted medal that attaches to the clicked face.
-- Can be mounted on full blocks, all kinds of glass, and glowstone. Slabs, stairs, fences, walls, flower pots and other partial blocks are rejected.
+- Mounts on full blocks, all kinds of glass, and glowstone. Slabs, stairs, fences, walls, flower pots and other partial blocks are rejected.
 - Drops automatically when its supporting block is removed.
 - Right-click with an item to embed it; the item is shown in the center of the medal.
 
-### Shared interaction
+### Shared behavior
 - Content and name lock independently. Setting content locks the content; naming locks the name.
 - Sneak right-click or break the block to retrieve the finished item. The item carries its data and restores the display (and lock state) when placed again.
-- When looked at, a floating name tag is shown above the block. The `§` color codes are supported.
+- Finished items render their actual content in the inventory, in hand, on the ground, and in item frames (an angled 3D preview), so you can tell what is inside at a glance.
+- When looked at, a floating name tag is shown above the block. `§` color codes are supported.
 - Hovering the item shows the custom name and the displayed content name.
-- Anvils cannot rename the finished items. Names are set only through the in-game naming screen.
+- Anvils cannot rename finished items. Names are set only through the in-game naming screen.
 
 ---
 
@@ -44,60 +46,49 @@ A Minecraft mod that adds two kinds of display blocks: the Trophy Base and the M
 
 ---
 
-## Drops
+## Configuration
 
-Drops are handled in code (the block returns the data-carrying item directly), so the mod does not ship a loot table. Breaking a display always yields the finished item with its data intact.
+Two config files are generated.
 
-If you prefer a data-pack-driven loot table instead, you can override it. The block entity stores its fields at the top level, so a `copy_nbt` function can copy them into `BlockEntityTag`. Example for the trophy:
+`odventure_core-client.toml`
 
-```json
-{
-  "type": "minecraft:block",
-  "pools": [
-    {
-      "rolls": 1,
-      "entries": [
-        {
-          "type": "minecraft:item",
-          "name": "odventure_core:trophy_base",
-          "functions": [
-            {
-              "function": "minecraft:copy_nbt",
-              "source": "block_entity",
-              "ops": [
-                { "source": "ContentType",   "target": "BlockEntityTag.ContentType",   "op": "replace" },
-                { "source": "ContentId",     "target": "BlockEntityTag.ContentId",     "op": "replace" },
-                { "source": "CustomName",    "target": "BlockEntityTag.CustomName",    "op": "replace" },
-                { "source": "ContentLocked", "target": "BlockEntityTag.ContentLocked", "op": "replace" },
-                { "source": "NameLocked",    "target": "BlockEntityTag.NameLocked",    "op": "replace" },
-                { "source": "DisplayScale",  "target": "BlockEntityTag.DisplayScale",  "op": "replace" },
-                { "source": "DisplayYaw",    "target": "BlockEntityTag.DisplayYaw",    "op": "replace" },
-                { "source": "DisplayY",      "target": "BlockEntityTag.DisplayY",      "op": "replace" }
-              ]
-            }
-          ]
-        }
-      ]
-    }
-  ]
-}
+```toml
+[render]
+    # Whether finished items dynamically render their display content (off = plain icon).
+    renderFinishedItems = true
+    # Show a floating name when looking at a trophy/medal.
+    showFloatingName = true
+
+[entities]
+    # Entity render blacklist (registry names). Not rendered anywhere, prevents crashes.
+    renderBlacklist = ["minecraft:area_effect_cloud", "minecraft:lightning_bolt", "minecraft:falling_block", "minecraft:item", "minecraft:player"]
 ```
 
-Note: to use the loot table you must remove the `getDrops` override in the block, otherwise the code path takes priority.
+`odventure_core-common.toml`
+
+```toml
+[gameplay]
+    # Whether to block anvil renaming of finished items.
+    enableAnvilBlock = true
+    # Whether sneak right-click retrieves the item (off = break only).
+    enableSneakRetrieve = true
+```
+
+If rendering finished items in the inventory causes lag (many entity trophies stacked), turn off `renderFinishedItems`, or add the heavy entity to `renderBlacklist`.
 
 ---
 
 ## Giving finished items (commands)
 
-A finished item is just an item with data under `BlockEntityTag`. You can hand it out with `/give`.
+A finished item is just an item with data under `BlockEntityTag`.
 
-Trophy displaying a diamond, named with a gold color code:
+Trophy displaying a diamond:
 
 ```
 /give @p odventure_core:trophy_base{BlockEntityTag:{ContentType:"ITEM",ContentId:"minecraft:diamond",ContentLocked:1b,CustomName:"§6Champion Trophy",NameLocked:1b,DisplayScale:1.0f,DisplayYaw:0.0f,DisplayY:0.0f}}
 ```
 
-Trophy displaying a creeper (entity), scaled down a bit:
+Trophy displaying a creeper:
 
 ```
 /give @p odventure_core:trophy_base{BlockEntityTag:{ContentType:"ENTITY",ContentId:"minecraft:creeper",ContentLocked:1b,CustomName:"§aBoss Slayer",NameLocked:1b,DisplayScale:0.8f,DisplayYaw:0.0f,DisplayY:0.0f}}
@@ -113,14 +104,12 @@ Medal embedding a nether star:
 
 ## FTB Quests rewards
 
-The mod is compatible with FTB Quests item rewards out of the box, because all data lives in standard item NBT (`BlockEntityTag`), which the quest reward serializer preserves.
+Compatible out of the box, because all data lives in standard item NBT (`BlockEntityTag`), which the quest reward serializer preserves.
 
-Two ways to set it up:
+1. In-game capture: obtain the finished item, then in the FTB Quests editor add an Item reward and pick it from your inventory.
+2. Via the API in a script (e.g. KubeJS): build the exact item with `OdventureCoreAPI`, then use it as the reward stack.
 
-1. In-game capture: obtain the finished item (craft, retrieve, or `/give` as above), then in the FTB Quests editor add an Item reward and pick it from your inventory. The NBT is captured with it.
-2. Via the API in a script (e.g. KubeJS). Call `OdventureCoreAPI` to build the exact item, then use it as the reward stack.
-
-KubeJS example (server script) building a trophy reward item:
+KubeJS example:
 
 ```js
 // kubejs/server_scripts/odventure_reward.js
@@ -137,8 +126,6 @@ global.makeChampionTrophy = () => {
     )
 }
 ```
-
-You can then use the resulting ItemStack wherever a reward stack is accepted.
 
 ---
 
@@ -164,9 +151,7 @@ MedalData readMedal(ItemStack stack)
 MedalData readMedal(Level level, BlockPos pos)
 ```
 
-`TrophyData` exposes the display parameters via `getDisplayScale()/setDisplayScale(float)`, `getDisplayYaw()/setDisplayYaw(float)`, and `getDisplayY()/setDisplayY(float)`. `MedalData` does not have display parameters.
-
-Both `TrophyData` and `MedalData` are public; see the in-class comments for field semantics.
+`TrophyData` exposes display parameters via `getDisplayScale()/setDisplayScale(float)`, `getDisplayYaw()/setDisplayYaw(float)`, and `getDisplayY()/setDisplayY(float)`. `MedalData` has no display parameters. Both classes are public; see the in-class comments for field semantics.
 
 ---
 
@@ -179,17 +164,18 @@ Both `TrophyData` and `MedalData` are public; see the in-class comments for fiel
 
 ## License
 
-All Rights Reserved.
+All Rights Reserved. Copyright (c) liluo23.
 
----
+<br>
 
-# Odventure Core
+# Odventure Core（中文）
 
 为 Minecraft 添加两类展示型方块：奖杯基座与奖章。把方块、物品、刷怪蛋（奖杯）或物品（奖章）放进去展示并自定义名称。成品可作为物品取回，数据随物品保存，重新放置即可还原。
 
 - 平台：Minecraft 1.20.1 / Forge 47.x
 - Mod ID：`odventure_core`
-- 作者: liluo23
+- 版本：1.0.0
+- 作者：liluo23
 
 ---
 
@@ -198,9 +184,9 @@ All Rights Reserved.
 ### 奖杯基座
 - 平滑石材质的矮台座，放置时朝向玩家。
 - 手持方块、物品或刷怪蛋右键放入展示：
-  - 方块 -> 在台座上方渲染该方块
-  - 物品 -> 渲染物品 3D 模型
-  - 刷怪蛋 -> 渲染对应实体的成体，按体型自动缩放到统一大小
+  - 方块：在台座上方渲染该方块
+  - 物品：渲染物品 3D 模型
+  - 刷怪蛋：渲染对应实体的成体，按体型自动缩放到统一大小
 - 放入内容后台座变为整格碰撞。
 - 创造模式下可调整展示物的缩放、旋转角度与高度偏移。
 
@@ -210,9 +196,10 @@ All Rights Reserved.
 - 支撑方块被移除时自动掉落。
 - 手持物品右键嵌入展示，物品显示在金牌中央。
 
-### 通用交互
+### 通用行为
 - 内容与名称各自独立上锁。放入内容后锁定内容，命名后锁定名称。
 - 潜行右键或破坏方块取回成品。成品为带数据的物品，重新放置还原展示并保持锁定状态。
+- 成品物品会在背包、手持、地面、物品展示框中渲染出实际展示内容（斜置 3D 预览），一眼就能看出里面装了什么。
 - 准心指向时，方块上方显示悬浮名牌，支持 `§` 颜色代码。
 - 物品悬停显示自定义名与展示内容名。
 - 铁砧无法对成品改名，名称统一通过游戏内命名界面设置。
@@ -229,60 +216,49 @@ All Rights Reserved.
 
 ---
 
-## 掉落处理
+## 配置
 
-破坏掉落由代码处理（方块直接返回带数据的物品），因此本模组不附带战利品表。破坏展示方块一定会得到带完整数据的成品。
+会生成两个配置文件。
 
-如果你更想用数据包的战利品表来控制掉落，可以自行覆盖。方块实体的字段存在顶层，用 `copy_nbt` 函数即可复制进 `BlockEntityTag`。奖杯示例：
+`odventure_core-client.toml`
 
-```json
-{
-  "type": "minecraft:block",
-  "pools": [
-    {
-      "rolls": 1,
-      "entries": [
-        {
-          "type": "minecraft:item",
-          "name": "odventure_core:trophy_base",
-          "functions": [
-            {
-              "function": "minecraft:copy_nbt",
-              "source": "block_entity",
-              "ops": [
-                { "source": "ContentType",   "target": "BlockEntityTag.ContentType",   "op": "replace" },
-                { "source": "ContentId",     "target": "BlockEntityTag.ContentId",     "op": "replace" },
-                { "source": "CustomName",    "target": "BlockEntityTag.CustomName",    "op": "replace" },
-                { "source": "ContentLocked", "target": "BlockEntityTag.ContentLocked", "op": "replace" },
-                { "source": "NameLocked",    "target": "BlockEntityTag.NameLocked",    "op": "replace" },
-                { "source": "DisplayScale",  "target": "BlockEntityTag.DisplayScale",  "op": "replace" },
-                { "source": "DisplayYaw",    "target": "BlockEntityTag.DisplayYaw",    "op": "replace" },
-                { "source": "DisplayY",      "target": "BlockEntityTag.DisplayY",      "op": "replace" }
-              ]
-            }
-          ]
-        }
-      ]
-    }
-  ]
-}
+```toml
+[render]
+    # 成品物品是否动态渲染展示内容（关闭则使用普通图标，省性能）。
+    renderFinishedItems = true
+    # 准心指向奖杯/奖章时是否悬浮显示名字。
+    showFloatingName = true
+
+[entities]
+    # 实体渲染黑名单（注册名）。名单内实体在世界与物品中都不渲染，避免崩溃。
+    renderBlacklist = ["minecraft:area_effect_cloud", "minecraft:lightning_bolt", "minecraft:falling_block", "minecraft:item", "minecraft:player"]
 ```
 
-注意：要启用战利品表，必须移除方块里的 `getDrops` 重写，否则代码路径优先。
+`odventure_core-common.toml`
+
+```toml
+[gameplay]
+    # 是否屏蔽铁砧对成品改名。
+    enableAnvilBlock = true
+    # 是否支持潜行右键取回（关闭则只能破坏取回）。
+    enableSneakRetrieve = true
+```
+
+如果背包里动态渲染成品导致卡顿（堆叠了大量展示实体的奖杯），关闭 `renderFinishedItems`，或把对应的高开销实体加入 `renderBlacklist`。
 
 ---
 
 ## 发放成品（指令）
 
-成品就是一个数据存在 `BlockEntityTag` 下的物品，可用 `/give` 发放。
+成品就是一个数据存在 `BlockEntityTag` 下的物品。
 
-展示钻石、名字带金色代码的奖杯：
+展示钻石的奖杯：
 
 ```
 /give @p odventure_core:trophy_base{BlockEntityTag:{ContentType:"ITEM",ContentId:"minecraft:diamond",ContentLocked:1b,CustomName:"§6冠军奖杯",NameLocked:1b,DisplayScale:1.0f,DisplayYaw:0.0f,DisplayY:0.0f}}
 ```
 
-展示苦力怕（实体）、略微缩小的奖杯：
+展示苦力怕的奖杯：
 
 ```
 /give @p odventure_core:trophy_base{BlockEntityTag:{ContentType:"ENTITY",ContentId:"minecraft:creeper",ContentLocked:1b,CustomName:"§aBoss终结者",NameLocked:1b,DisplayScale:0.8f,DisplayYaw:0.0f,DisplayY:0.0f}}
@@ -298,14 +274,12 @@ All Rights Reserved.
 
 ## FTB 任务奖励
 
-本模组开箱兼容 FTB Quests 的物品奖励，因为所有数据都存在标准物品 NBT（`BlockEntityTag`）里，任务奖励的序列化会原样保留它。
+开箱兼容，因为所有数据都存在标准物品 NBT（`BlockEntityTag`）里，任务奖励的序列化会原样保留。
 
-两种配置方式：
+1. 游戏内捕获：先拿到成品，在 FTB Quests 编辑器里添加物品奖励并从背包选取。
+2. 用脚本调 API（如 KubeJS）：用 `OdventureCoreAPI` 构造出精确的物品，作为奖励物品使用。
 
-1. 游戏内捕获：先拿到成品（制作、取回，或用上面的 `/give`），在 FTB Quests 编辑器里添加物品奖励并从背包选取，NBT 会一并被记录。
-2. 用脚本调 API（如 KubeJS）。调用 `OdventureCoreAPI` 构造出精确的物品，作为奖励物品使用。
-
-KubeJS 示例（服务端脚本），构造一个奖杯奖励物品：
+KubeJS 示例：
 
 ```js
 // kubejs/server_scripts/odventure_reward.js
@@ -322,8 +296,6 @@ global.makeChampionTrophy = () => {
     )
 }
 ```
-
-得到的 ItemStack 可用在任何接受奖励物品的地方。
 
 ---
 
@@ -349,9 +321,7 @@ MedalData readMedal(ItemStack stack)
 MedalData readMedal(Level level, BlockPos pos)
 ```
 
-`TrophyData` 通过 `getDisplayScale()/setDisplayScale(float)`、`getDisplayYaw()/setDisplayYaw(float)`、`getDisplayY()/setDisplayY(float)` 暴露展示参数。`MedalData` 没有展示参数。
-
-`TrophyData` 与 `MedalData` 均为 public，字段语义见类内注释。
+`TrophyData` 通过 `getDisplayScale()/setDisplayScale(float)`、`getDisplayYaw()/setDisplayYaw(float)`、`getDisplayY()/setDisplayY(float)` 暴露展示参数。`MedalData` 没有展示参数。两个类均为 public，字段语义见类内注释。
 
 ---
 
@@ -364,4 +334,4 @@ MedalData readMedal(Level level, BlockPos pos)
 
 ## 许可
 
-保留所有权利（All Rights Reserved）。
+保留所有权利（All Rights Reserved）。版权所有 (c) liluo23。
