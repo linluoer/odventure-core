@@ -7,15 +7,17 @@ import com.odventure.core.registry.ModBlocks;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
+import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.HorizontalDirectionalBlock;
 import net.minecraft.world.level.block.state.BlockState;
 
 public class MedalItemRenderer extends BlockEntityWithoutLevelRenderer {
-    private static final double VERTICAL_OFFSET = -0.08;
-    private static final float ITEM_SCALE = 0.4f;
+    private static final double VERTICAL_OFFSET = 0.12;
+    private static final float ITEM_SCALE = 0.45f;
 
     public MedalItemRenderer() {
         super(Minecraft.getInstance().getBlockEntityRenderDispatcher(),
@@ -25,7 +27,8 @@ public class MedalItemRenderer extends BlockEntityWithoutLevelRenderer {
     @Override
     public void renderByItem(ItemStack stack, ItemDisplayContext ctx, PoseStack pose,
                              MultiBufferSource buffer, int light, int overlay) {
-        BlockState medalState = ModBlocks.MEDAL.get().defaultBlockState();
+        BlockState medalState = ModBlocks.MEDAL.get().defaultBlockState()
+                .setValue(HorizontalDirectionalBlock.FACING, Direction.SOUTH);
 
         if (!ConfigCache.renderFinishedItems()) {
             renderPlainBlock(medalState, ctx, pose, buffer, light, overlay);
@@ -48,8 +51,9 @@ public class MedalItemRenderer extends BlockEntityWithoutLevelRenderer {
         if (!embedded.isEmpty()) {
             pose.pushPose();
             pose.translate(0.5, 0.5 + VERTICAL_OFFSET, 0.5);
-            pose.translate(0.0, 0.0, 0.5 - 1.5 / 16.0 + 0.01);
+            pose.translate(0.0, 0.0, -0.34);
             pose.scale(ITEM_SCALE, ITEM_SCALE, ITEM_SCALE);
+
             Minecraft.getInstance().getItemRenderer().renderStatic(
                     embedded, ItemDisplayContext.FIXED, light, overlay,
                     pose, buffer, level, 0);

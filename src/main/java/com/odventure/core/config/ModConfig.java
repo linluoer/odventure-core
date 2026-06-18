@@ -9,9 +9,14 @@ import java.util.List;
 @Mod.EventBusSubscriber(modid = OdventureCore.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class ModConfig {
 
+    public enum EmbeddedRenderMode {
+        FIXED, GROUND, NONE
+    }
+
     public static final ForgeConfigSpec CLIENT_SPEC;
     public static final ForgeConfigSpec.BooleanValue RENDER_FINISHED_ITEMS;
     public static final ForgeConfigSpec.BooleanValue SHOW_FLOATING_NAME;
+    public static final ForgeConfigSpec.EnumValue<EmbeddedRenderMode> EMBEDDED_RENDER_MODE;
     public static final ForgeConfigSpec.ConfigValue<List<? extends String>> RENDER_BLACKLIST;
 
     static {
@@ -26,6 +31,10 @@ public class ModConfig {
                 .comment("\u51c6\u5fc3\u6307\u5411\u5956\u676f/\u5956\u7ae0\u65f6\u662f\u5426\u60ac\u6d6e\u663e\u793a\u540d\u5b57\u3002",
                          "Show a floating name when looking at a trophy/medal.")
                 .define("showFloatingName", true);
+        EMBEDDED_RENDER_MODE = b
+                .comment("\u5d4c\u5165\u7269\u54c1\u7684\u6e32\u67d3\u4e0a\u4e0b\u6587\u3002FIXED=\u5e73\u9762\u56fe\u6807(\u90e8\u5206\u7269\u54c1\u5982\u6c89\u6d78\u5f0f\u98de\u673a)\uff1bGROUND=\u5730\u9762\u7684 3D \u6a21\u578b\uff1bNONE=3D\u6a21\u578b\u4e14\u4e0d\u53e0\u52a0\u4f4d\u79fb\u53d8\u6362\u3002",
+                         "Render context for embedded items. FIXED = flat icon (some items like immersive planes); GROUND = ground 3D model; NONE = 3D model without display transform.")
+                .defineEnum("embeddedRenderMode", EmbeddedRenderMode.GROUND);
         b.pop();
 
         b.push("entities");

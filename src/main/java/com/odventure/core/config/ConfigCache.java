@@ -1,9 +1,11 @@
 package com.odventure.core.config;
 
 import com.odventure.core.OdventureCore;
+import com.odventure.core.config.ModConfig.EmbeddedRenderMode;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.config.ModConfigEvent;
@@ -25,6 +27,15 @@ public class ConfigCache {
 
     public static boolean showFloatingName() {
         return ModConfig.SHOW_FLOATING_NAME.get();
+    }
+
+    public static ItemDisplayContext embeddedRenderContext() {
+        EmbeddedRenderMode mode = ModConfig.EMBEDDED_RENDER_MODE.get();
+        return switch (mode) {
+            case FIXED  -> ItemDisplayContext.FIXED;
+            case GROUND -> ItemDisplayContext.GROUND;
+            case NONE   -> ItemDisplayContext.NONE;
+        };
     }
 
     @SubscribeEvent

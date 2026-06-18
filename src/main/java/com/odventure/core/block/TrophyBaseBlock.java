@@ -8,6 +8,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.EntityType;
@@ -107,8 +108,13 @@ public class TrophyBaseBlock extends HorizontalDirectionalBlock implements Entit
                     data.setContent(TrophyData.ContentType.BLOCK,
                             BuiltInRegistries.BLOCK.getKey(blockItem.getBlock()));
                 } else {
-                    data.setContent(TrophyData.ContentType.ITEM,
-                            BuiltInRegistries.ITEM.getKey(item));
+                    ResourceLocation itemId = BuiltInRegistries.ITEM.getKey(item);
+                    if (BuiltInRegistries.ENTITY_TYPE.containsKey(itemId)) {
+
+                        data.setContent(TrophyData.ContentType.ENTITY, itemId);
+                    } else {
+                        data.setContent(TrophyData.ContentType.ITEM, itemId);
+                    }
                 }
                 data.setContentLocked(true);
                 be.setData(data);
